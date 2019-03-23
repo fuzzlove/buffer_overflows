@@ -1,5 +1,6 @@
 #!/usr/bin/python 
 # coding: utf-8
+# Crossfire SetUp() Remote Buffer Overflow
 import socket 
  
 host = "127.0.0.1" 

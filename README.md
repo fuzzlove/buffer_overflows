@@ -1,1 +1,1 @@
-Varius bufferoverflows while I was in the process of studying.
+Various bufferoverflows made or examined while I was in the process of studying.

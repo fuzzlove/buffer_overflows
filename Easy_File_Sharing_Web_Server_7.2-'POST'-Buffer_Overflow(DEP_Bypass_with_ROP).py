@@ -1,5 +1,5 @@
 # Easy File Sharing Web Server 7.2 - 'POST' Buffer Overflow (DEP Bypass with ROP)
-# Credits to : bl4ck h4ck3r
+# Credits to : bl4ck h4ck3r | Based off of https://www.exploit-db.com/exploits/42186
 # Tested on Windows 7 Home Basic SP1
 # Opens shell on port 31337 DEP Bypass! (ROP)
 
